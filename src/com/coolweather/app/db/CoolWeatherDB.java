@@ -76,7 +76,7 @@ public List<Province> loadProvinces(){
 /**
  * 将City实例存储到数据库
  */
-public void saveCity(City city){
+public void saveCities(City city){
 	if(city != null){
 		ContentValues values = new ContentValues();
 		values.put("city_name",city.getCityName());
@@ -88,7 +88,7 @@ public void saveCity(City city){
 /**
  * 从数据库读取某省下所有的城市信息
  */
-public List<City> loadCity(int provinceId){
+public List<City> loadCities(int provinceId){
 	List<City> list = new ArrayList<City>();
 	Cursor cursor = db.query("City", null, "province_id=?", new String[]{String.valueOf(provinceId)},
 							null, null, null);
@@ -109,7 +109,7 @@ public List<City> loadCity(int provinceId){
 /**
  * 将Country实例存储到数据库
  */
-public void saveCounty(County county){
+public void saveCounties(County county){
 	if(county != null){
 		ContentValues values = new ContentValues();
 		values.put("county_name",county.getCountyName());
