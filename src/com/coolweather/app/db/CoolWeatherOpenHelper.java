@@ -9,25 +9,25 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 /**
  * Province 表建表语句
  */
-	public static final String CREATOR_PROVINCE = "creat table Province("
+	public static final String CREATOR_PROVINCE = "create table Province("
 												  +"id integer primary key autoincrement," 
 												  +"province_name text,"
 												  +"province_code text)" ;
 	/**
 	 * City表建表语句
 	 */
-	public static final String CREATOR_CITY = "creat table City("
+	public static final String CREATOR_CITY = "create table City("
 			  +"id integer primary key autoincrement," 
 			  +"city_name text,"
-			  +"city_code text)" 
-			  +"province_in integer)" ;
+			  +"city_code text," 
+			  +"province_id integer)" ;
 	/**
 	 * County表建表语句
 	 */
-	public static final String CREATOR_COUNTY = "creat table County("
+	public static final String CREATOR_COUNTY = "create table County("
 			  +"id integer primary key autoincrement," 
 			  +"county_name text,"
-			  +"county_code text)" 
+			  +"county_code text," 
 			  +"city_id ineger)" ;
 	
 	

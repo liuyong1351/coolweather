@@ -7,7 +7,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,6 +30,7 @@ public class ChooseAreaActivity extends Activity {
 public static final int LEVEL_PROVINCE = 0;
 public static final int LEVEL_CITY = 1;
 public static final int LEVEL_COUNTY = 2;
+private static final String TAG="ChooseAreaActivity";
 
 private ProgressDialog progressDialog;
 private TextView titleText;
@@ -57,7 +62,7 @@ protected void onCreate(Bundle savedInstanceState){
 	adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dataList);
 	listView.setAdapter(adapter);	
 	coolWeatherDB = CoolWeatherDB.getInstance(this);
-/*	listView.setOnItemClickListener(new OnItemClickListener(){
+	listView.setOnItemClickListener(new OnItemClickListener(){
 		public void onItemClick(AdapterView<?> arg0,View view,int index,
 				long arg3){
 			
@@ -70,7 +75,7 @@ protected void onCreate(Bundle savedInstanceState){
 			}
 		}
 	});
-	queryProvinces();//加载省级数据*/
+	queryProvinces();//加载省级数据
 }
 /**
  * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询。
@@ -106,7 +111,7 @@ private void queryCities(){
 		titleText.setText(selectedProvince.getProvinceName());
 		currentLevel = LEVEL_CITY;
 	}else{
-		queryFromServer(selectedProvince.getProvinceCode(),"province");
+		queryFromServer(selectedProvince.getProvinceCode(),"city");
 	}
 }
 
@@ -125,7 +130,7 @@ private void queryCounties(){
 		titleText.setText(selectedCity.getCityName());
 		currentLevel = LEVEL_COUNTY;
 	}else{
-		queryFromServer(selectedCity.getCityCode(),"province");
+		queryFromServer(selectedCity.getCityCode(),"county");
 	}
 }
 /**
@@ -153,6 +158,7 @@ private void queryFromServer(final String code,final String type){
 						selectedCity.getId());
 			}
 			if(result){
+				 Log.d(TAG, "sendHttpRequestresultok");
 				//通过runOnUitThread（）方法回到主线程逻辑
 				runOnUiThread(new Runnable(){
 					public void run(){
