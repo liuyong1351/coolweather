@@ -11,6 +11,7 @@ public class Utility {
 /**
  * 解析和处理服务器返回的省级数据
  */
+	private final static String TAG = "Utility";
 	public synchronized static boolean handleProvincesResponse(CoolWeatherDB coolWeatherDB,String response){
 		if(!TextUtils.isEmpty(response)){
 			String[] allProvinces = response.split(",");
@@ -34,7 +35,9 @@ public class Utility {
  */
 	public static boolean handleCitiesResponse(CoolWeatherDB
 			coolWeatherDB,String response,int provinceId){
+		LogUtil.i(Utility.TAG,"handleCitiesResponse");
 		if(!TextUtils.isEmpty(response)){
+			LogUtil.i(Utility.TAG,"handleCitiesResponse222");
 			String[] allCities = response.split(",");
 			if(allCities != null && allCities.length>0){
 				for(String c:allCities){
@@ -44,7 +47,7 @@ public class Utility {
 					city.setCityName(array[1]);
 					city.setProvinceId(provinceId);
 					//将解析处理的数据存储到City表
-					coolWeatherDB.saveCities(city);
+					coolWeatherDB.saveCity(city);
 				}
 				return true;
 			}
@@ -66,7 +69,7 @@ public class Utility {
 						county.setCountyName(array[1]);
 						county.setCityId(cityId);
 						//将解析处理的数据存储到City表
-						coolWeatherDB.saveCounties(county);
+						coolWeatherDB.saveCounty(county);
 					}
 					return true;
 				}

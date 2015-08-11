@@ -24,13 +24,14 @@ import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
 import com.coolweather.app.util.HttpCallbackListener;
 import com.coolweather.app.util.HttpUtil;
+import com.coolweather.app.util.LogUtil;
 import com.coolweather.app.util.Utility;
 
 public class ChooseAreaActivity extends Activity {
 public static final int LEVEL_PROVINCE = 0;
 public static final int LEVEL_CITY = 1;
 public static final int LEVEL_COUNTY = 2;
-private static final String TAG="ChooseAreaActivity";
+private static final String TAG = "ChooseAreaActivity";
 
 private ProgressDialog progressDialog;
 private TextView titleText;
@@ -49,8 +50,6 @@ private Province selectedProvince; // 选中的省份
 
 private City selectedCity; //选中的城市
 
-private County selectedCounty; //选中的县
-
 private int currentLevel;  //选中的级别
 
 protected void onCreate(Bundle savedInstanceState){
@@ -65,11 +64,11 @@ protected void onCreate(Bundle savedInstanceState){
 	listView.setOnItemClickListener(new OnItemClickListener(){
 		public void onItemClick(AdapterView<?> arg0,View view,int index,
 				long arg3){
-			
+			LogUtil.i(ChooseAreaActivity.TAG, "onItemClick");
 			if(currentLevel == LEVEL_PROVINCE){
 				selectedProvince = provinceList.get(index);
 				queryCities();
-			}else if(currentLevel == LEVEL_PROVINCE){
+			}else if(currentLevel == LEVEL_CITY){
 				selectedCity = cityList.get(index);
 				queryCounties();
 			}
@@ -81,6 +80,7 @@ protected void onCreate(Bundle savedInstanceState){
  * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询。
  */
 private void queryProvinces(){
+	LogUtil.i(ChooseAreaActivity.TAG, "queryProvinces");
 	provinceList = coolWeatherDB.loadProvinces();
 	if(provinceList.size()>0){
 		dataList.clear();
@@ -100,6 +100,7 @@ private void queryProvinces(){
  * 查询选中省内所有的市，优先从数据库查询，如果没有查询到再去服务器上查询。
  */
 private void queryCities(){
+	LogUtil.i(ChooseAreaActivity.TAG, "queryCities");
 	cityList = coolWeatherDB.loadCities(selectedProvince.getId());
 	if(cityList.size()>0){
 		dataList.clear();
@@ -119,6 +120,7 @@ private void queryCities(){
  * 查询选中省内所有的县，优先从数据库查询，如果没有查询到再去服务器上查询。
  */
 private void queryCounties(){
+	LogUtil.i(ChooseAreaActivity.TAG, "queryCounties");
 	countyList = coolWeatherDB.loadCounties(selectedCity.getId());
 	if(countyList.size()>0){
 		dataList.clear();
@@ -137,6 +139,7 @@ private void queryCounties(){
  * 根据传入的代号和类型从服务器上查询省市县数据
  */
 private void queryFromServer(final String code,final String type){
+	LogUtil.i(ChooseAreaActivity.TAG, "queryFromServer");
 	String address;
 	if(!TextUtils.isEmpty(code)){
 		address = "http://www.weather.com.cn/data/list3/city"+code+".xml";
@@ -148,26 +151,30 @@ private void queryFromServer(final String code,final String type){
 	HttpUtil.sendHttpRequest(address, new HttpCallbackListener(){
 		public void onFinish(String response){
 			boolean result = false;
+			LogUtil.i(ChooseAreaActivity.TAG, "onFinish");
 			if("province".equals(type)){
 				result = Utility.handleProvincesResponse(coolWeatherDB, response);
 			}else if("city".equals(type)){
-				result = Utility.handleCountiesResponse(coolWeatherDB, response,
-						selectedCity.getId());
-			}else if("cunty".equals(type)){
+				
+				result = Utility.handleCitiesResponse(coolWeatherDB, response,
+						selectedProvince.getId());
+			}else if("county".equals(type)){
 				result =Utility.handleCountiesResponse(coolWeatherDB, response,
 						selectedCity.getId());
 			}
 			if(result){
-				 Log.d(TAG, "sendHttpRequestresultok");
 				//通过runOnUitThread（）方法回到主线程逻辑
 				runOnUiThread(new Runnable(){
 					public void run(){
 						closeProgressDialog();
 						if("province".equals(type)){
+							 LogUtil.i(ChooseAreaActivity.TAG, "sendHttpRequestresultok province");
 							queryProvinces();
 						}else if("city".equals(type)){
+							LogUtil.i(ChooseAreaActivity.TAG, "sendHttpRequestresultok city");
 							queryCities();
 						}else if("county".equals(type)){
+							LogUtil.i(ChooseAreaActivity.TAG, "sendHttpRequestresultok county");
 							queryCounties();
 						}
 					}

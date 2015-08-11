@@ -6,6 +6,7 @@ import java.util.List;
 import com.coolweather.app.model.City;
 import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
+import com.coolweather.app.util.LogUtil;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,13 +27,14 @@ private static CoolWeatherDB coolWeatherDB;
 
 private SQLiteDatabase db;
 
+private final static String TAG = "CoolWeatherDB";
 /**
  * 将构造方法私有化
  */
 private CoolWeatherDB(Context context){
 	CoolWeatherOpenHelper dbHelper = new CoolWeatherOpenHelper(
 			context,DB_NAME,null,VERSION);
-	db = dbHelper.getReadableDatabase();
+	db = dbHelper.getWritableDatabase();
 }
 /**
  * 获取CoolWeatherDB的实例
@@ -47,7 +49,9 @@ public synchronized static CoolWeatherDB getInstance(Context context){
  * 将Province实例存储到数据库
  */
 public void saveProvince(Province province){
+//	LogUtil.i(CoolWeatherDB.TAG,"saveProvince");
 	if(province != null){
+	//   LogUtil.d(CoolWeatherDB.TAG,""+province.getProvinceName()+province.getProvinceCode());
 		ContentValues values = new ContentValues();
 		values.put("province_name",province.getProvinceName());
 		values.put("province_code",province.getProvinceCode());
@@ -76,8 +80,10 @@ public List<Province> loadProvinces(){
 /**
  * 将City实例存储到数据库
  */
-public void saveCities(City city){
+public void saveCity(City city){
+	LogUtil.i(CoolWeatherDB.TAG,"saveCity");
 	if(city != null){
+	  LogUtil.d(CoolWeatherDB.TAG,""+city.getCityName()+city.getCityCode());
 		ContentValues values = new ContentValues();
 		values.put("city_name",city.getCityName());
 		values.put("city_code",city.getCityCode());
@@ -109,12 +115,12 @@ public List<City> loadCities(int provinceId){
 /**
  * 将Country实例存储到数据库
  */
-public void saveCounties(County county){
+public void saveCounty(County county){
 	if(county != null){
 		ContentValues values = new ContentValues();
 		values.put("county_name",county.getCountyName());
 		values.put("county_code",county.getCountyCode());
-		values.put("county_id",county.getCityId());
+		values.put("city_id",county.getCityId());
 		db.insert("County", null, values);
 	}
 }
